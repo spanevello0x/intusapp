@@ -1,0 +1,2055 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intus Cripto - Calculadora de Valor por Ponto em Airdrops</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #fbbf24 100%);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .project-card {
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .value-highlight {
+            background: linear-gradient(135deg, #1e40af, #fbbf24);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+        
+        .scenario-card {
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+        }
+        
+        .scenario-conservative {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+        }
+        
+        .scenario-approximate {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+        }
+        
+        .dark-mode {
+            background: #1a1a1a;
+            color: #e5e7eb;
+        }
+        
+        .dark-mode .project-card {
+            background: #2d2d2d;
+            border-color: #404040;
+            color: #e5e7eb;
+        }
+        
+        .dark-mode .glass-card {
+            background: rgba(45, 45, 45, 0.9);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark-mode input,
+        .dark-mode select {
+            background: #404040;
+            border-color: #555;
+            color: #e5e7eb;
+        }
+        
+        .dark-mode .scenario-approximate {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .intus-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        
+        .intus-colors {
+            background: linear-gradient(135deg, #1e40af 0%, #fbbf24 100%);
+        }
+        
+        .video-section {
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .video-carousel {
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #fbbf24 #2d2d2d;
+        }
+        
+        .video-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .video-carousel::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+        
+        .video-carousel::-webkit-scrollbar-thumb {
+            background: #fbbf24;
+            border-radius: 4px;
+        }
+        
+        .video-card {
+            min-width: 320px;
+            background: #2d2d2d;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(251, 191, 36, 0.9);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #1a1a1a;
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            background: #fbbf24;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .social-youtube {
+            background: #FF0000;
+        }
+        
+        .social-twitter {
+            background: #1DA1F2;
+        }
+        
+        .social-discord {
+            background: #5865F2;
+        }
+        
+        .social-instagram {
+            background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+        }
+        
+        .social-tiktok {
+            background: #000000;
+        }
+        
+        .social-website {
+            background: #1e40af;
+        }
+        
+        .social-newsletter {
+            background: #059669;
+        }
+        
+        .language-selector {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            dark:background: #374151;
+            border: 1px solid #e5e7eb;
+            dark:border-color: #4b5563;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 1000;
+            min-width: 120px;
+            margin-top: 4px;
+        }
+        
+        .dark-mode .language-dropdown {
+            background: #374151;
+            border-color: #4b5563;
+        }
+        
+        .language-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .language-option:hover {
+            background: #f3f4f6;
+        }
+        
+        .dark-mode .language-option:hover {
+            background: #4b5563;
+        }
+        
+        .language-option:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .language-option:last-child {
+            border-radius: 0 0 8px 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .video-card {
+                min-width: 280px;
+            }
+            
+            .social-icons {
+                gap: 0.75rem;
+            }
+            
+            .social-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main App -->
+    <div id="mainApp" class="min-h-screen transition-all duration-300">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-3">
+                        <div class="intus-colors rounded-lg w-12 h-12 flex items-center justify-center p-1">
+                            <img src="https://page1.genspark.site/v1/base64_upload/a7e85a179f3330057bcfbc913fef9901" alt="Intus Cripto" class="w-full h-full object-contain">
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900 dark:text-white" data-translate="site-title">Intus Cripto</h1>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" data-translate="site-subtitle">Calculadora de Airdrops</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <!-- Language Selector -->
+                        <div class="language-selector">
+                            <button id="languageToggle" onclick="toggleLanguageDropdown()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center space-x-1">
+                                <span id="currentLanguageFlag">🇧🇷</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div id="languageDropdown" class="language-dropdown hidden">
+                                <div class="language-option" onclick="changeLanguage('pt')">
+                                    <span>🇧🇷</span>
+                                    <span>Português</span>
+                                </div>
+                                <div class="language-option" onclick="changeLanguage('en')">
+                                    <span>🇺🇸</span>
+                                    <span>English</span>
+                                </div>
+                                <div class="language-option" onclick="changeLanguage('es')">
+                                    <span>🇪🇸</span>
+                                    <span>Español</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dark Mode Toggle -->
+                        <button id="darkModeToggle" onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                            <i class="fas fa-moon dark:hidden"></i>
+                            <i class="fas fa-sun hidden dark:inline"></i>
+                        </button>
+                        
+                        <!-- User Info -->
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 intus-colors rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span id="userName" class="text-sm font-medium text-gray-700 dark:text-gray-300">Usuário Intus</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Welcome Section -->
+            <div id="welcomeSection" class="text-center mb-8 p-8 intus-colors rounded-2xl text-white">
+                <div class="mb-6">
+                    <div class="bg-white rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center p-2">
+                        <img src="https://page1.genspark.site/v1/base64_upload/a7e85a179f3330057bcfbc913fef9901" alt="Intus Cripto" class="intus-logo">
+                    </div>
+                    <h2 class="text-4xl font-bold mb-4" data-translate="welcome-title">Bem-vindo ao Intus Cripto</h2>
+                    <p class="text-xl mb-4 opacity-90" data-translate="welcome-subtitle">Calculadora de Valor por Ponto em Airdrops</p>
+                    <p class="text-lg mb-6 opacity-80" data-translate="welcome-slogan">Faça parte da melhor comunidade de CriptoAtivos do Brasil</p>
+                    <p class="text-base opacity-90" data-translate="welcome-description">Analise estimativas de valor por ponto para airdrops de criptomoedas baseadas em dados públicos e cálculos conservadores.</p>
+                </div>
+                
+                <div class="bg-white bg-opacity-20 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-semibold mb-4" data-translate="how-to-use">Como usar:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-left">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-arrow-down text-yellow-300"></i>
+                            <span data-translate="how-to-step1">Selecione um projeto no menu abaixo</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-chart-line text-yellow-300"></i>
+                            <span data-translate="how-to-step2">Veja os cenários de pontos (Conservador e Aproximado)</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-filter text-yellow-300"></i>
+                            <span data-translate="how-to-step3">Use os filtros para organizar por TVL, FDV, etc.</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-exclamation-triangle text-yellow-300"></i>
+                            <span data-translate="how-to-step4">Lembre-se: são apenas estimativas!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Warning -->
+            <div class="bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4 mb-8">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-exclamation-triangle text-yellow-600 dark:text-yellow-400 mt-1"></i>
+                    <div>
+                        <h3 class="font-semibold text-yellow-800 dark:text-yellow-200" data-translate="warning-title">Aviso Importante</h3>
+                        <p class="text-yellow-700 dark:text-yellow-300 mt-1" data-translate="warning-text">
+                            Estas são estimativas conservadoras baseadas em dados públicos. Os valores podem variar com mudanças de FDV, dinâmica de mercado, vesting, NFTs queimados ou alterações na tokenomics. <strong>Não constitui aconselhamento financeiro.</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-search mr-1"></i> <span data-translate="select-project">Selecione um Projeto</span>
+                        </label>
+                        <select id="projectSelect" onchange="selectProject()" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <option value="" data-translate="choose-project">Escolha um projeto para ver detalhes...</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-translate="visualize">Visualizar</label>
+                        <div class="flex items-center space-x-2 mt-3">
+                            <input type="checkbox" id="includeFinalized" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                            <label for="includeFinalized" class="text-sm text-gray-700 dark:text-gray-300" data-translate="include-finalized">Incluir Finalizados</label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-translate="sort-by">Ordenar por</label>
+                        <select id="sortBy" onchange="applySorting()" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <option value="valorPonto" data-translate="sort-value-point">Valor/Ponto (Conservador)</option>
+                            <option value="tvl">TVL</option>
+                            <option value="fdv">FDV</option>
+                            <option value="valorAirdrop" data-translate="sort-total-airdrop">Total Airdrop ($)</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" data-translate="order">Ordem</label>
+                        <select id="sortOrder" onchange="applySorting()" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <option value="desc" data-translate="order-desc">Decrescente (Maior primeiro)</option>
+                            <option value="asc" data-translate="order-asc">Crescente (Menor primeiro)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project Details -->
+            <div id="projectDetails" class="hidden"></div>
+        </main>
+        
+        <!-- Video and Social Section -->
+        <section class="video-section py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Videos Section -->
+                <div class="mb-16">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-white mb-4">
+                            <i class="fab fa-youtube text-red-500 mr-3"></i>
+                            <span data-translate="learn-airdrops">Aprenda sobre Airdrops e DeFi com Intus Cripto</span>
+                        </h2>
+                        <p class="text-gray-300 text-lg" data-translate="videos-description">Confira nossos vídeos educacionais sobre os projetos e redes da calculadora</p>
+                    </div>
+                    
+                    <div class="video-carousel flex space-x-6 pb-4" style="overflow-x: auto;">
+                        <!-- Video Card 1 - Estes Airdrops Mudaram -->
+                        <div class="video-card flex-shrink-0">
+                            <div class="video-thumbnail" style="background-image: url('https://i.ytimg.com/vi/kTkPxmNvmZI/hq720.jpg');">
+                                <a href="https://www.youtube.com/watch?v=kTkPxmNvmZI" target="_blank" class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">10:38</div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-white mb-2 line-clamp-2">🚨 ESTES AIRDROPS MUDARAM! ENTENDA AS ATUALIZAÇÕES!</h3>
+                                <p class="text-gray-400 text-sm">Diego | IntusCripto</p>
+                                <p class="text-gray-500 text-xs mt-1">8 de maio de 2025 • 11.362 visualizações</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Card 2 - Pools de Liquidez -->
+                        <div class="video-card flex-shrink-0">
+                            <div class="video-thumbnail" style="background-image: url('https://i.ytimg.com/vi/MTZQNUOIeoc/hq720.jpg');">
+                                <a href="https://www.youtube.com/watch?v=MTZQNUOIeoc" target="_blank" class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">21:26</div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-white mb-2 line-clamp-2">🪂 2 AIRDROPS AUTOMATIZANDO POOLS DE LIQUIDEZ 🤯</h3>
+                                <p class="text-gray-400 text-sm">Diego | IntusCripto</p>
+                                <p class="text-gray-500 text-xs mt-1">4 meses atrás • 1.940 visualizações</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Card 3 - Eigen Layer -->
+                        <div class="video-card flex-shrink-0">
+                            <div class="video-thumbnail" style="background-image: url('https://i.ytimg.com/vi/OPxxXmeXz4Y/hq720.jpg');">
+                                <a href="https://www.youtube.com/watch?v=OPxxXmeXz4Y" target="_blank" class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">1:01:37</div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-white mb-2 line-clamp-2">MAIS RENDIMENTO e MAIS AIRDROP! - EIGEN LAYER / RESTAKING</h3>
+                                <p class="text-gray-400 text-sm">Diego | IntusCripto</p>
+                                <p class="text-gray-500 text-xs mt-1">1 ano atrás • 1.070 visualizações</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Card 4 - Eclipse Airdrop -->
+                        <div class="video-card flex-shrink-0">
+                            <div class="video-thumbnail" style="background-image: url('https://i.ytimg.com/vi/qwpvsPavr7A/hq720.jpg');">
+                                <a href="https://www.youtube.com/watch?v=qwpvsPavr7A" target="_blank" class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">25:53</div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-white mb-2 line-clamp-2">🪂 AIRDROP ECLIPSE: ESTRATÉGIA COM MAIS DE 5 AIRDROPS 🚀</h3>
+                                <p class="text-gray-400 text-sm">Diego | IntusCripto</p>
+                                <p class="text-gray-500 text-xs mt-1">4 meses atrás • 15.308 visualizações</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Card 5 - DeFi Potencializa -->
+                        <div class="video-card flex-shrink-0">
+                            <div class="video-thumbnail" style="background-image: url('https://i.ytimg.com/vi/6o0ZiGLjzzQ/hq720.jpg');">
+                                <a href="https://www.youtube.com/watch?v=6o0ZiGLjzzQ" target="_blank" class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">1:30:21</div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-white mb-2 line-clamp-2">COMO AIRDROPS E DEFI POTENCIALIZAM SEUS INVESTIMENTOS</h3>
+                                <p class="text-gray-400 text-sm">Diego | IntusCripto</p>
+                                <p class="text-gray-500 text-xs mt-1">11 meses atrás • 1.007 visualizações</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Card 6 - Sendo Farmado -->
+                        <div class="video-card flex-shrink-0">
+                            <div class="video-thumbnail" style="background-image: url('https://i.ytimg.com/vi/tZ0iGQvix6M/hq720.jpg');">
+                                <a href="https://www.youtube.com/watch?v=tZ0iGQvix6M" target="_blank" class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </a>
+                                <div class="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">58:56</div>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-white mb-2 line-clamp-2">VOCÊ ESTA SENDO FARMADO! AIRDROPS FRUSTANTES?</h3>
+                                <p class="text-gray-400 text-sm">Diego | IntusCripto</p>
+                                <p class="text-gray-500 text-xs mt-1">1 ano atrás • 1.087 visualizações</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Social Media Section -->
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-white mb-4">
+                        <i class="fas fa-users text-yellow-400 mr-3"></i>
+                        <span data-translate="follow-intus">Siga a Intus Cripto</span>
+                    </h2>
+                    <p class="text-gray-300 text-lg mb-8" data-translate="follow-description">Acompanhe nossas análises e conteúdos em todas as plataformas</p>
+                    
+                    <div class="social-icons">
+                        <a href="https://www.youtube.com/@IntusCripto" target="_blank" class="social-icon social-youtube" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        
+                        <a href="https://x.com/diego_intus" target="_blank" class="social-icon social-twitter" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        
+                        <a href="https://discord.gg/3rTJgsUR" target="_blank" class="social-icon social-discord" title="Discord">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        
+                        <a href="https://www.instagram.com/intuscripto/" target="_blank" class="social-icon social-instagram" title="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        
+                        <a href="https://www.tiktok.com/@intuscripto" target="_blank" class="social-icon social-tiktok" title="TikTok">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        
+                        <a href="https://diegointuscripto.com.br/" target="_blank" class="social-icon social-website" title="Website">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                        
+                        <a href="https://news.intuscripto.com.br/" target="_blank" class="social-icon social-newsletter" title="Newsletter">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                    
+                    <div class="mt-8 p-6 bg-gray-800 rounded-xl">
+                        <p class="text-yellow-400 font-semibold mb-2">
+                            <i class="fas fa-star mr-2"></i>
+                            <span data-translate="community-cta">Faça parte da melhor comunidade de CriptoAtivos do Brasil</span>
+                        </p>
+                        <p class="text-gray-300 text-sm" data-translate="community-description">
+                            Acesse conteúdos exclusivos, análises detalhadas e mantenha-se atualizado sobre as melhores oportunidades no mundo cripto
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex justify-center items-center space-x-4">
+                    <div class="intus-colors rounded-lg w-12 h-12 flex items-center justify-center p-1">
+                        <img src="https://page1.genspark.site/v1/base64_upload/a7e85a179f3330057bcfbc913fef9901" alt="Intus Cripto" class="w-full h-full object-contain">
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-900 dark:text-white font-semibold" data-translate="footer-copyright">© 2024 Intus Cripto</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm" data-translate="footer-slogan">Faça parte da melhor comunidade de CriptoAtivos do Brasil</p>
+                        <p class="text-gray-500 dark:text-gray-500 text-xs mt-1" data-translate="footer-data">Dados atualizados automaticamente</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Translations object
+        const translations = {
+            pt: {
+                'site-title': 'Intus Cripto',
+                'site-subtitle': 'Calculadora de Airdrops',
+                'site-slogan': 'Faça parte da melhor comunidade de CriptoAtivos do Brasil',
+                'welcome-title': 'Bem-vindo ao Intus Cripto',
+                'welcome-subtitle': 'Calculadora de Valor por Ponto em Airdrops',
+                'welcome-slogan': 'Faça parte da melhor comunidade de CriptoAtivos do Brasil',
+                'welcome-description': 'Analise estimativas de valor por ponto para airdrops de criptomoedas baseadas em dados públicos e cálculos conservadores.',
+                'how-to-use': 'Como usar:',
+                'how-to-step1': 'Selecione um projeto no menu abaixo',
+                'how-to-step2': 'Veja os cenários de pontos (Conservador e Aproximado)',
+                'how-to-step3': 'Use os filtros para organizar por TVL, FDV, etc.',
+                'how-to-step4': 'Lembre-se: são apenas estimativas!',
+                'warning-title': 'Aviso Importante',
+                'warning-text': 'Estas são estimativas conservadoras baseadas em dados públicos. Os valores podem variar com mudanças de FDV, dinâmica de mercado, vesting, NFTs queimados ou alterações na tokenomics. Não constitui aconselhamento financeiro.',
+                'select-project': 'Selecione um Projeto',
+                'choose-project': 'Escolha um projeto para ver detalhes...',
+                'visualize': 'Visualizar',
+                'include-finalized': 'Incluir Finalizados',
+                'sort-by': 'Ordenar por',
+                'sort-value-point': 'Valor/Ponto (Conservador)',
+                'sort-total-airdrop': 'Total Airdrop ($)',
+                'order': 'Ordem',
+                'order-desc': 'Decrescente (Maior primeiro)',
+                'order-asc': 'Crescente (Menor primeiro)',
+                'learn-airdrops': 'Aprenda sobre Airdrops e DeFi com Intus Cripto',
+                'videos-description': 'Confira nossos vídeos educacionais sobre os projetos e redes da calculadora',
+                'follow-intus': 'Siga a Intus Cripto',
+                'follow-description': 'Acompanhe nossas análises e conteúdos em todas as plataformas',
+                'community-cta': 'Faça parte da melhor comunidade de CriptoAtivos do Brasil',
+                'community-description': 'Acesse conteúdos exclusivos, análises detalhadas e mantenha-se atualizado sobre as melhores oportunidades no mundo cripto',
+                'footer-copyright': '© 2024 Intus Cripto',
+                'footer-slogan': 'Faça parte da melhor comunidade de CriptoAtivos do Brasil',
+                'footer-data': 'Dados atualizados automaticamente'
+            },
+            en: {
+                'site-title': 'Intus Crypto',
+                'site-subtitle': 'Airdrop Calculator',
+                'site-slogan': 'Join the best CryptoAssets community in Brazil',
+                'welcome-title': 'Welcome to Intus Crypto',
+                'welcome-subtitle': 'Airdrop Point Value Calculator',
+                'welcome-slogan': 'Join the best CryptoAssets community in Brazil',
+                'welcome-description': 'Analyze point value estimates for cryptocurrency airdrops based on public data and conservative calculations.',
+                'how-to-use': 'How to use:',
+                'how-to-step1': 'Select a project from the menu below',
+                'how-to-step2': 'View point scenarios (Conservative and Approximate)',
+                'how-to-step3': 'Use filters to organize by TVL, FDV, etc.',
+                'how-to-step4': 'Remember: these are just estimates!',
+                'warning-title': 'Important Warning',
+                'warning-text': 'These are conservative estimates based on public data. Values may vary with changes in FDV, market dynamics, vesting, burned NFTs, or tokenomics changes. Does not constitute financial advice.',
+                'select-project': 'Select a Project',
+                'choose-project': 'Choose a project to see details...',
+                'visualize': 'Display',
+                'include-finalized': 'Include Finalized',
+                'sort-by': 'Sort by',
+                'sort-value-point': 'Value/Point (Conservative)',
+                'sort-total-airdrop': 'Total Airdrop ($)',
+                'order': 'Order',
+                'order-desc': 'Descending (Highest first)',
+                'order-asc': 'Ascending (Lowest first)',
+                'learn-airdrops': 'Learn about Airdrops and DeFi with Intus Crypto',
+                'videos-description': 'Check out our educational videos about calculator projects and networks',
+                'follow-intus': 'Follow Intus Crypto',
+                'follow-description': 'Follow our analysis and content on all platforms',
+                'community-cta': 'Join the best CryptoAssets community in Brazil',
+                'community-description': 'Access exclusive content, detailed analysis and stay updated on the best opportunities in the crypto world',
+                'footer-copyright': '© 2024 Intus Crypto',
+                'footer-slogan': 'Join the best CryptoAssets community in Brazil',
+                'footer-data': 'Data updated automatically'
+            },
+            es: {
+                'site-title': 'Intus Cripto',
+                'site-subtitle': 'Calculadora de Airdrops',
+                'site-slogan': 'Únete a la mejor comunidad de CriptoActivos de Brasil',
+                'welcome-title': 'Bienvenido a Intus Cripto',
+                'welcome-subtitle': 'Calculadora de Valor por Punto en Airdrops',
+                'welcome-slogan': 'Únete a la mejor comunidad de CriptoActivos de Brasil',
+                'welcome-description': 'Analiza estimaciones de valor por punto para airdrops de criptomonedas basadas en datos públicos y cálculos conservadores.',
+                'how-to-use': 'Cómo usar:',
+                'how-to-step1': 'Selecciona un proyecto en el menú de abajo',
+                'how-to-step2': 'Ve los escenarios de puntos (Conservador y Aproximado)',
+                'how-to-step3': 'Usa los filtros para organizar por TVL, FDV, etc.',
+                'how-to-step4': '¡Recuerda: son solo estimaciones!',
+                'warning-title': 'Aviso Importante',
+                'warning-text': 'Estas son estimaciones conservadoras basadas en datos públicos. Los valores pueden variar con cambios en FDV, dinámica de mercado, vesting, NFTs quemados o cambios en tokenomics. No constituye asesoramiento financiero.',
+                'select-project': 'Selecciona un Proyecto',
+                'choose-project': 'Elige un proyecto para ver detalles...',
+                'visualize': 'Visualizar',
+                'include-finalized': 'Incluir Finalizados',
+                'sort-by': 'Ordenar por',
+                'sort-value-point': 'Valor/Punto (Conservador)',
+                'sort-total-airdrop': 'Total Airdrop ($)',
+                'order': 'Orden',
+                'order-desc': 'Descendente (Mayor primero)',
+                'order-asc': 'Ascendente (Menor primero)',
+                'learn-airdrops': 'Aprende sobre Airdrops y DeFi con Intus Cripto',
+                'videos-description': 'Mira nuestros videos educativos sobre los proyectos y redes de la calculadora',
+                'follow-intus': 'Sigue a Intus Cripto',
+                'follow-description': 'Sigue nuestros análisis y contenido en todas las plataformas',
+                'community-cta': 'Únete a la mejor comunidad de CriptoActivos de Brasil',
+                'community-description': 'Accede a contenido exclusivo, análisis detallados y mantente actualizado sobre las mejores oportunidades en el mundo cripto',
+                'footer-copyright': '© 2024 Intus Cripto',
+                'footer-slogan': 'Únete a la mejor comunidad de CriptoActivos de Brasil',
+                'footer-data': 'Datos actualizados automáticamente'
+            }
+        };
+        
+        // Language functions
+        let currentLanguage = 'pt';
+        
+        function loadLanguage() {
+            const savedLang = localStorage.getItem('intus_language');
+            if (savedLang && translations[savedLang]) {
+                currentLanguage = savedLang;
+            }
+            applyTranslations();
+            updateLanguageFlag();
+        }
+        
+        function changeLanguage(lang) {
+            if (translations[lang]) {
+                currentLanguage = lang;
+                localStorage.setItem('intus_language', lang);
+                applyTranslations();
+                updateLanguageFlag();
+                toggleLanguageDropdown();
+            }
+        }
+        
+        function updateLanguageFlag() {
+            const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' };
+            document.getElementById('currentLanguageFlag').textContent = flags[currentLanguage];
+        }
+        
+        function applyTranslations() {
+            const elements = document.querySelectorAll('[data-translate]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.textContent = translations[currentLanguage][key];
+                }
+            });
+            
+            // Handle placeholders
+            const placeholderElements = document.querySelectorAll('[data-translate-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.getAttribute('data-translate-placeholder');
+                if (translations[currentLanguage] && translations[currentLanguage][key]) {
+                    element.placeholder = translations[currentLanguage][key];
+                }
+            });
+        }
+        
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('languageDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        // Close language dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const languageSelector = document.querySelector('.language-selector');
+            const dropdown = document.getElementById('languageDropdown');
+            
+            if (!languageSelector.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+        
+        // Project Data
+        const projectsData = {
+            "Metamorphosis": {
+                name: "Metamorphosis",
+                network: "Mantle",
+                season: "S3",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.methprotocol.xyz/campaigns/methamorphosis-s3/leaderboard?rank=powder",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "22/09/2025",
+                diasRestantes: 108,
+                totalSupply: 5000000000,
+                alocacaoPercent: 4.0,
+                airdropSupply: 200000000,
+                tvl: 181077.62,
+                fdv: 45313800.29,
+                valorAirdrop: 1812552.01,
+                token: "COOK",
+                valorToken: 0.0091,
+                conservador: {
+                    custoPorPts: 0.009501168627,
+                    ptsPorToken: 1.0,
+                    ptsAtuais: 3062062,
+                    mediaDiaria: 1738050,
+                    ptsTotal: 190771481
+                },
+                aproximado: {
+                    custoPorPts: 0.014138286537,
+                    ptsPorToken: 0.6,
+                    ptsAtuais: 3062062,
+                    mediaDiaria: 1158700,
+                    ptsTotal: 128201675
+                }
+            },
+            "Sonic": {
+                name: "Sonic",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://my.soniclabs.com/points",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: 3175000000,
+                alocacaoPercent: 2.0,
+                airdropSupply: 63500000,
+                tvl: 505799297.15,
+                fdv: 1205110126.68,
+                valorAirdrop: 24102202.53,
+                token: "S",
+                valorToken: 0.3796,
+                conservador: {
+                    custoPorPts: 0.014381367314,
+                    ptsPorToken: 26.4,
+                    ptsAtuais: 1399710189,
+                    mediaDiaria: 27622243,
+                    ptsTotal: 1675932615
+                },
+                aproximado: {
+                    custoPorPts: 0.015217396593,
+                    ptsPorToken: 24.9,
+                    ptsAtuais: 1399710189,
+                    mediaDiaria: 18414828,
+                    ptsTotal: 1583858473
+                }
+            },
+            "Rings Protocol": {
+                name: "Rings Protocol",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://app.rings.money/#/points",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 140882075.84,
+                fdv: null,
+                valorAirdrop: 1249720.55,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: 0.000003355213,
+                    ptsPorToken: null,
+                    ptsAtuais: 352986285174,
+                    mediaDiaria: 1948498633,
+                    ptsTotal: 372471271507
+                },
+                aproximado: {
+                    custoPorPts: 0.000003414758,
+                    ptsPorToken: null,
+                    ptsAtuais: 352986285174,
+                    mediaDiaria: 1298999089,
+                    ptsTotal: 365976276063
+                }
+            },
+            "Stable Jack": {
+                name: "Stable Jack",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://app.stablejack.xyz/leaderboard",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 7684191.38,
+                fdv: null,
+                valorAirdrop: 55048.39,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Beets": {
+                name: "Beets",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://beets.fi/",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 270744873.49,
+                fdv: null,
+                valorAirdrop: 1671930.17,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Shadow Exchange": {
+                name: "Shadow Exchange",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://www.shadow.so/",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 48654110.21,
+                fdv: null,
+                valorAirdrop: 279885.64,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Stability": {
+                name: "Stability",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://stability.farm/users",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 57926353.48,
+                fdv: null,
+                valorAirdrop: 296106.00,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: 0.494343509900,
+                    ptsPorToken: null,
+                    ptsAtuais: 556149,
+                    mediaDiaria: 4284,
+                    ptsTotal: 598988
+                },
+                aproximado: {
+                    custoPorPts: 0.506416509474,
+                    ptsPorToken: null,
+                    ptsAtuais: 556149,
+                    mediaDiaria: 2856,
+                    ptsTotal: 584708
+                }
+            },
+            "Silo Finance": {
+                name: "Silo Finance",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://points.silo.finance/",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 203179274.51,
+                fdv: null,
+                valorAirdrop: 3213101.15,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: 0.000025334354,
+                    ptsPorToken: null,
+                    ptsAtuais: 105453538506,
+                    mediaDiaria: 2137429333,
+                    ptsTotal: 126827831837
+                },
+                aproximado: {
+                    custoPorPts: 0.000026842262,
+                    ptsPorToken: null,
+                    ptsAtuais: 105453538506,
+                    mediaDiaria: 1424952889,
+                    ptsTotal: 119703067393
+                }
+            },
+            "Pendle": {
+                name: "Pendle",
+                network: "Sonic",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Airdrop Sonic Gem",
+                consulta: "https://app.pendle.finance/trade/points",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "16/06/2025",
+                diasRestantes: 10,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 4649504935.13,
+                fdv: null,
+                valorAirdrop: 961620.95,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Lombard": {
+                name: "Lombard",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://www.lombard.finance/app/dashboard/",
+                dataAtualizacao: "16/05/2025",
+                diasAtualizacao: 21,
+                finalSeason: "20/06/2025",
+                diasRestantes: 14,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 1891903773.67,
+                fdv: 1500000000.00,
+                valorAirdrop: 75000000.00,
+                token: null,
+                valorToken: 1.5000,
+                conservador: {
+                    custoPorPts: 0.004880747080,
+                    ptsPorToken: 307.3,
+                    ptsAtuais: 14012000000,
+                    mediaDiaria: 96750000,
+                    ptsTotal: 15366500000
+                },
+                aproximado: {
+                    custoPorPts: 0.005028494804,
+                    ptsPorToken: 298.3,
+                    ptsAtuais: 14012000000,
+                    mediaDiaria: 64500000,
+                    ptsTotal: 14915000000
+                }
+            },
+            "Kyrosfi": {
+                name: "Kyrosfi",
+                network: "Solana",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.kyros.fi/leaderboard",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "26/06/2025",
+                diasRestantes: 20,
+                totalSupply: 1000000000,
+                alocacaoPercent: 10.0,
+                airdropSupply: 100000000,
+                tvl: 38717075.34,
+                fdv: 100000000.00,
+                valorAirdrop: 10000000.00,
+                token: null,
+                valorToken: 0.1000,
+                conservador: {
+                    custoPorPts: 0.006302654617,
+                    ptsPorToken: 15.9,
+                    ptsAtuais: 1355882563,
+                    mediaDiaria: 11537523,
+                    ptsTotal: 1586633031
+                },
+                aproximado: {
+                    custoPorPts: 0.006623761435,
+                    ptsPorToken: 15.1,
+                    ptsAtuais: 1355882563,
+                    mediaDiaria: 7691682,
+                    ptsTotal: 1509716209
+                }
+            },
+            "Huma Finance": {
+                name: "Huma Finance",
+                network: "Solana",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.huma.finance/feathers/leaderboard",
+                dataAtualizacao: "04/06/2025",
+                diasAtualizacao: 2,
+                finalSeason: "30/06/2025",
+                diasRestantes: 24,
+                totalSupply: 10000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 500000000,
+                tvl: 116600345.29,
+                fdv: 456122678.58,
+                valorAirdrop: 22806133.93,
+                token: "HUMA",
+                valorToken: 0.0456,
+                conservador: {
+                    custoPorPts: 0.016459252013,
+                    ptsPorToken: 2.8,
+                    ptsAtuais: 788015314,
+                    mediaDiaria: 24899854,
+                    ptsTotal: 1385611807
+                },
+                aproximado: {
+                    custoPorPts: 0.019222761708,
+                    ptsPorToken: 2.4,
+                    ptsAtuais: 788015314,
+                    mediaDiaria: 16599903,
+                    ptsTotal: 1186412976
+                }
+            },
+            "Open Eden": {
+                name: "Open Eden",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://portal.openeden.com/bills-campaign?chain=mainnet",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "15/07/2025",
+                diasRestantes: 39,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 342168148.62,
+                fdv: 200000000.00,
+                valorAirdrop: 10000000.00,
+                token: null,
+                valorToken: 0.2000,
+                conservador: {
+                    custoPorPts: 0.000027217153,
+                    ptsPorToken: 7348.3,
+                    ptsAtuais: 155841108437,
+                    mediaDiaria: 5424980651,
+                    ptsTotal: 367415353819
+                },
+                aproximado: {
+                    custoPorPts: 0.000033682440,
+                    ptsPorToken: 5937.8,
+                    ptsAtuais: 155841108437,
+                    mediaDiaria: 3616653767,
+                    ptsTotal: 296890605358
+                }
+            },
+            "Spark": {
+                name: "Spark",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://points.spark.fi/",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "14/08/2025",
+                diasRestantes: 69,
+                totalSupply: 10000000000,
+                alocacaoPercent: 1.0,
+                airdropSupply: 86800000,
+                tvl: 5939435419.78,
+                fdv: 500000000.00,
+                valorAirdrop: 4340000.00,
+                token: null,
+                valorToken: 0.0500,
+                conservador: {
+                    custoPorPts: 0.000036016152,
+                    ptsPorToken: 1388.3,
+                    ptsAtuais: 40525769561,
+                    mediaDiaria: 1159068435,
+                    ptsTotal: 120501491589
+                },
+                aproximado: {
+                    custoPorPts: 0.000046247496,
+                    ptsPorToken: 1081.1,
+                    ptsAtuais: 40525769561,
+                    mediaDiaria: 772712290,
+                    ptsTotal: 93842917579
+                }
+            },
+            "Fragmetric": {
+                name: "Fragmetric",
+                network: "Solana",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.fragmetric.xyz/rewards/fpoint/",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "29/08/2025",
+                diasRestantes: 84,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 223875004.81,
+                fdv: 300000000.00,
+                valorAirdrop: 15000000.00,
+                token: null,
+                valorToken: 0.3000,
+                conservador: {
+                    custoPorPts: 0.000212933574,
+                    ptsPorToken: 1408.9,
+                    ptsAtuais: 28479326914,
+                    mediaDiaria: 499585442,
+                    ptsTotal: 70444504060
+                },
+                aproximado: {
+                    custoPorPts: 0.000265693112,
+                    ptsPorToken: 1129.1,
+                    ptsAtuais: 28479326914,
+                    mediaDiaria: 333056961,
+                    ptsTotal: 56456111678
+                }
+            },
+            "Infrared": {
+                name: "Infrared",
+                network: "Berachain",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "Adicionado 5x no Supply Total de Pontos",
+                consulta: "https://infrared.finance/points",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "30/08/2025",
+                diasRestantes: 85,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 901569153.21,
+                fdv: 300000000.00,
+                valorAirdrop: 15000000.00,
+                token: null,
+                valorToken: 0.3000,
+                conservador: {
+                    custoPorPts: 0.033851421489,
+                    ptsPorToken: 8.9,
+                    ptsAtuais: 43258975,
+                    mediaDiaria: 533689,
+                    ptsTotal: 443112854
+                },
+                aproximado: {
+                    custoPorPts: 0.040815564560,
+                    ptsPorToken: 7.4,
+                    ptsAtuais: 43258975,
+                    mediaDiaria: 355793,
+                    ptsTotal: 367506861
+                }
+            },
+            "Resolv": {
+                name: "Resolv",
+                network: "Ethereum",
+                season: "S2",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.resolv.xyz/",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "09/09/2025",
+                diasRestantes: 95,
+                totalSupply: 1000000000,
+                alocacaoPercent: 4.0,
+                airdropSupply: 40000000,
+                tvl: 386035014.14,
+                fdv: 300000000.00,
+                valorAirdrop: 12000000.00,
+                token: null,
+                valorToken: 0.3000,
+                conservador: {
+                    custoPorPts: 0.000003638267,
+                    ptsPorToken: 82456.8,
+                    ptsAtuais: 553184088910,
+                    mediaDiaria: 28895675062,
+                    ptsTotal: 3298273219758
+                },
+                aproximado: {
+                    custoPorPts: 0.000005035155,
+                    ptsPorToken: 59581.1,
+                    ptsAtuais: 553184088910,
+                    mediaDiaria: 19263783374,
+                    ptsTotal: 2383243509476
+                }
+            },
+            "Eclipse": {
+                name: "Eclipse",
+                network: "Eclipse",
+                season: "S1-2",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://tap.eclipse.xyz/?discord-status=success",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "11/09/2025",
+                diasRestantes: 97,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 152832.70,
+                fdv: 300000000.00,
+                valorAirdrop: 15000000.00,
+                token: null,
+                valorToken: 0.3000,
+                conservador: {
+                    custoPorPts: 0.084436855368,
+                    ptsPorToken: 3.6,
+                    ptsAtuais: 83567338,
+                    mediaDiaria: 969899,
+                    ptsTotal: 177647544
+                },
+                aproximado: {
+                    custoPorPts: 0.102537827993,
+                    ptsPorToken: 2.9,
+                    ptsAtuais: 83567338,
+                    mediaDiaria: 646599,
+                    ptsTotal: 146287475
+                }
+            },
+            "Ethereal": {
+                name: "Ethereal",
+                network: "Ethereum",
+                season: "S0-1",
+                status: "Ativo",
+                observacoes: "Protocolo está Desenvolvendo Leaderboard",
+                consulta: "https://deposit.ethereal.trade/points",
+                dataAtualizacao: null,
+                diasAtualizacao: null,
+                finalSeason: "24/09/2025",
+                diasRestantes: 110,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 742423447.29,
+                fdv: null,
+                valorAirdrop: null,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Ethena": {
+                name: "Ethena",
+                network: "Ethereum",
+                season: "S4",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.ethena.fi/join",
+                dataAtualizacao: "04/06/2025",
+                diasAtualizacao: 2,
+                finalSeason: "24/09/2025",
+                diasRestantes: 110,
+                totalSupply: 15000000000,
+                alocacaoPercent: 1.5,
+                airdropSupply: 225000000,
+                tvl: 5939205285.32,
+                fdv: 4580398904.71,
+                valorAirdrop: 68705983.57,
+                token: "ENA",
+                valorToken: 0.3054,
+                conservador: {
+                    custoPorPts: 0.000001632691,
+                    ptsPorToken: 187028.6,
+                    ptsAtuais: 12142214876772,
+                    mediaDiaria: 272174647259,
+                    ptsTotal: 42081426075312
+                },
+                aproximado: {
+                    custoPorPts: 0.000002140261,
+                    ptsPorToken: 142674.2,
+                    ptsAtuais: 12142214876772,
+                    mediaDiaria: 181449764840,
+                    ptsTotal: 32101689009132
+                }
+            },
+            "Level": {
+                name: "Level",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.level.money/farm/leaderboard",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "25/09/2025",
+                diasRestantes: 111,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 121103283.61,
+                fdv: 200000000.00,
+                valorAirdrop: 10000000.00,
+                token: null,
+                valorToken: 0.2000,
+                conservador: {
+                    custoPorPts: 0.000000002849,
+                    ptsPorToken: 70188807.5,
+                    ptsAtuais: 1001737249765160,
+                    mediaDiaria: 22591920045065,
+                    ptsTotal: 3509440374767400
+                },
+                aproximado: {
+                    custoPorPts: 0.000000003412,
+                    ptsPorToken: 58614793.1,
+                    ptsAtuais: 1001737249765160,
+                    mediaDiaria: 17378400034666,
+                    ptsTotal: 2930739653613040
+                }
+            },
+            "GAIB AI": {
+                name: "GAIB AI",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://aid.gaib.ai/explore",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "30/09/2025",
+                diasRestantes: 116,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 20165561.00,
+                fdv: 100000000.00,
+                valorAirdrop: 5000000.00,
+                token: null,
+                valorToken: 0.1000,
+                conservador: {
+                    custoPorPts: 0.000104237290,
+                    ptsPorToken: 959.3,
+                    ptsAtuais: 4647619559,
+                    mediaDiaria: 373447064,
+                    ptsTotal: 47967479020
+                },
+                aproximado: {
+                    custoPorPts: 0.000149131195,
+                    ptsPorToken: 670.6,
+                    ptsAtuais: 4647619559,
+                    mediaDiaria: 248964710,
+                    ptsTotal: 33527525867
+                }
+            },
+            "Coinshift": {
+                name: "Coinshift",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://coinshift.global/points/",
+                dataAtualizacao: "26/05/2025",
+                diasAtualizacao: 11,
+                finalSeason: "30/09/2025",
+                diasRestantes: 116,
+                totalSupply: 10000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 500000000,
+                tvl: 113238117.99,
+                fdv: 150000000.00,
+                valorAirdrop: 7500000.00,
+                token: null,
+                valorToken: 0.0150,
+                conservador: {
+                    custoPorPts: 0.000009447056,
+                    ptsPorToken: 1587.8,
+                    ptsAtuais: 58690249272,
+                    mediaDiaria: 6337998639,
+                    ptsTotal: 793898091448
+                },
+                aproximado: {
+                    custoPorPts: 0.000013665463,
+                    ptsPorToken: 1097.7,
+                    ptsAtuais: 58690249272,
+                    mediaDiaria: 4225332426,
+                    ptsTotal: 548828810723
+                }
+            },
+            "Treehouse": {
+                name: "Treehouse",
+                network: "Ethereum",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.treehouse.finance/leaderboard",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "30/09/2025",
+                diasRestantes: 116,
+                totalSupply: 18000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 900000,
+                tvl: 286853023.85,
+                fdv: 400000000.00,
+                valorAirdrop: 20000000.00,
+                token: null,
+                valorToken: 22.2222,
+                conservador: {
+                    custoPorPts: 0.017330143776,
+                    ptsPorToken: 1282.3,
+                    ptsAtuais: 886785786,
+                    mediaDiaria: 2304075,
+                    ptsTotal: 1154058516
+                },
+                aproximado: {
+                    custoPorPts: 0.018779913953,
+                    ptsPorToken: 1183.3,
+                    ptsAtuais: 886785786,
+                    mediaDiaria: 1536050,
+                    ptsTotal: 1064967606
+                }
+            },
+            "Reservoir": {
+                name: "Reservoir",
+                network: "Berachain",
+                season: "S2",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.reservoir.xyz/leaderboard",
+                dataAtualizacao: "02/06/2025",
+                diasAtualizacao: 4,
+                finalSeason: "02/12/2025",
+                diasRestantes: 179,
+                totalSupply: 1000000000,
+                alocacaoPercent: 5.0,
+                airdropSupply: 50000000,
+                tvl: 106455177.63,
+                fdv: 150000000.00,
+                valorAirdrop: 7500000.00,
+                token: null,
+                valorToken: 0.1500,
+                conservador: {
+                    custoPorPts: 0.000131820206,
+                    ptsPorToken: 1137.9,
+                    ptsAtuais: 40169724,
+                    mediaDiaria: 317628537,
+                    ptsTotal: 56895677850
+                },
+                aproximado: {
+                    custoPorPts: 0.000197660533,
+                    ptsPorToken: 758.9,
+                    ptsAtuais: 40169724,
+                    mediaDiaria: 211752358,
+                    ptsTotal: 37943841808
+                }
+            },
+            "Nemo Protocol": {
+                name: "Nemo Protocol",
+                network: "Sui",
+                season: "S1",
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://www.nemoprotocol.com/#/points",
+                dataAtualizacao: "06/06/2025",
+                diasAtualizacao: 0,
+                finalSeason: "20/02/2026",
+                diasRestantes: 259,
+                totalSupply: 1000000000,
+                alocacaoPercent: 1.0,
+                airdropSupply: 10000000,
+                tvl: null,
+                fdv: 50000000.00,
+                valorAirdrop: 500000.00,
+                token: null,
+                valorToken: 0.0500,
+                conservador: {
+                    custoPorPts: 0.002018707725,
+                    ptsPorToken: 24.8,
+                    ptsAtuais: 7712147,
+                    mediaDiaria: 926529,
+                    ptsTotal: 247683205
+                },
+                aproximado: {
+                    custoPorPts: 0.002981641687,
+                    ptsPorToken: 16.8,
+                    ptsAtuais: 7712147,
+                    mediaDiaria: 617686,
+                    ptsTotal: 167692853
+                }
+            },
+            "Midas": {
+                name: "Midas",
+                network: "Base",
+                season: "S1",
+                status: "Inativo",
+                observacoes: "Campanha de Airdrop não Iniciada",
+                consulta: "https://midas.app/",
+                dataAtualizacao: null,
+                diasAtualizacao: null,
+                finalSeason: null,
+                diasRestantes: null,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 116038025.81,
+                fdv: null,
+                valorAirdrop: null,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Falcon": {
+                name: "Falcon",
+                network: "Ethereum",
+                season: "S1",
+                status: "Inativo",
+                observacoes: "Campanha de Airdrop não Iniciada",
+                consulta: "https://app.falcon.finance/miles",
+                dataAtualizacao: null,
+                diasAtualizacao: null,
+                finalSeason: null,
+                diasRestantes: null,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: null,
+                fdv: null,
+                valorAirdrop: null,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            },
+            "Perena": {
+                name: "Perena",
+                network: null,
+                season: null,
+                status: "Ativo",
+                observacoes: "",
+                consulta: "https://app.perena.org/rewards",
+                dataAtualizacao: null,
+                diasAtualizacao: null,
+                finalSeason: null,
+                diasRestantes: null,
+                totalSupply: null,
+                alocacaoPercent: null,
+                airdropSupply: null,
+                tvl: 26419745.53,
+                fdv: null,
+                valorAirdrop: null,
+                token: null,
+                valorToken: null,
+                conservador: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                },
+                aproximado: {
+                    custoPorPts: null,
+                    ptsPorToken: null,
+                    ptsAtuais: null,
+                    mediaDiaria: null,
+                    ptsTotal: null
+                }
+            }
+        };
+        
+        // Dark mode functionality
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('intus_darkmode', isDark);
+        }
+        
+        function loadDarkMode() {
+            const isDark = localStorage.getItem('intus_darkmode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+        
+        // Project functions
+        function loadProjects() {
+            const select = document.getElementById('projectSelect');
+            select.innerHTML = '<option value="">Escolha um projeto para ver detalhes...</option>';
+            
+            Object.keys(projectsData).forEach(key => {
+                const project = projectsData[key];
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = `${project.name} - ${project.network || 'N/A'} ${project.season || ''}`;
+                select.appendChild(option);
+            });
+            
+            // Update option text after language change
+            applyTranslations();
+        }
+        
+        function selectProject() {
+            const select = document.getElementById('projectSelect');
+            const projectKey = select.value;
+            
+            if (!projectKey) {
+                document.getElementById('projectDetails').classList.add('hidden');
+                document.getElementById('welcomeSection').classList.remove('hidden');
+                return;
+            }
+            
+            document.getElementById('welcomeSection').classList.add('hidden');
+            showProjectDetails(projectsData[projectKey]);
+        }
+        
+        function showProjectDetails(project) {
+            const detailsDiv = document.getElementById('projectDetails');
+            
+            // Format values
+            const formatCurrency = (value) => {
+                if (value === null || value === undefined) return 'N/A';
+                if (value >= 1000000000) return `$${(value / 1000000000).toFixed(1)}B`;
+                if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+                if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
+                return `$${value.toFixed(2)}`;
+            };
+            
+            const formatNumber = (value) => {
+                if (value === null || value === undefined) return 'N/A';
+                return value.toLocaleString();
+            };
+            
+            const formatPercent = (value) => {
+                if (value === null || value === undefined) return 'N/A';
+                return `${value}%`;
+            };
+            
+            const conservadorValue = project.conservador.custoPorPts ? 
+                `$${project.conservador.custoPorPts.toFixed(12)}` : 'N/A';
+            const aproximadoValue = project.aproximado.custoPorPts ? 
+                `$${project.aproximado.custoPorPts.toFixed(12)}` : 'N/A';
+            
+            detailsDiv.innerHTML = `
+                <div class="project-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-center space-x-3">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">${project.name}</h2>
+                            <a href="${project.consulta}" target="_blank" class="text-blue-600 hover:text-blue-700">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">${project.status}</span>
+                            <span class="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">${project.network || 'N/A'}</span>
+                            <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">${project.season || 'N/A'}</span>
+                            ${project.observacoes ? `<span class="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200 px-3 py-1 rounded-full text-sm font-medium">${project.observacoes}</span>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="value-highlight text-center mb-6">
+                        <i class="fas fa-coins mr-2"></i> Valor por Ponto
+                        <div class="text-2xl font-bold mt-1">${conservadorValue}</div>
+                        <div class="text-sm opacity-90">Conservador</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Supply</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${formatNumber(project.totalSupply)}</div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">FDV</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${formatCurrency(project.fdv)}</div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">% Airdrop</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${formatPercent(project.alocacaoPercent)}</div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Airdrop Supply</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${formatNumber(project.airdropSupply)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">TVL</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${formatCurrency(project.tvl)}</div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Valor Airdrop</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${formatCurrency(project.valorAirdrop)}</div>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Token</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${project.token || 'TBA'}</div>
+                        </div>
+                        
+                        <div class="bg-yellow-100 dark:bg-yellow-900 rounded-lg p-4">
+                            <div class="text-sm text-gray-600 dark:text-gray-400 mb-1">Preço Token</div>
+                            <div class="text-lg font-semibold text-gray-900 dark:text-white">${project.valorToken ? `$${project.valorToken.toFixed(4)}` : 'N/A'}</div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Cenários de Pontos</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="scenario-card scenario-conservative">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-semibold"><i class="fas fa-shield-alt mr-2"></i> Conservador</h4>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <div class="opacity-90">Custo/Ponto:</div>
+                                    <div class="font-semibold">${conservadorValue}</div>
+                                </div>
+                                <div>
+                                    <div class="opacity-90">Pts Total:</div>
+                                    <div class="font-semibold">${formatNumber(project.conservador.ptsTotal)}</div>
+                                </div>
+                                <div>
+                                    <div class="opacity-90">Pts por Token:</div>
+                                    <div class="font-semibold">${project.conservador.ptsPorToken || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div class="opacity-90">Média Diária:</div>
+                                    <div class="font-semibold">${formatNumber(project.conservador.mediaDiaria)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="scenario-card scenario-approximate">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="font-semibold"><i class="fas fa-chart-line mr-2"></i> Aproximado</h4>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <div class="opacity-90">Custo/Ponto:</div>
+                                    <div class="font-semibold">${aproximadoValue}</div>
+                                </div>
+                                <div>
+                                    <div class="opacity-90">Pts Total:</div>
+                                    <div class="font-semibold">${formatNumber(project.aproximado.ptsTotal)}</div>
+                                </div>
+                                <div>
+                                    <div class="opacity-90">Pts por Token:</div>
+                                    <div class="font-semibold">${project.aproximado.ptsPorToken || 'N/A'}</div>
+                                </div>
+                                <div>
+                                    <div class="opacity-90">Média Diária:</div>
+                                    <div class="font-semibold">${formatNumber(project.aproximado.mediaDiaria)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Atividade Atual</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">${formatNumber(project.conservador.ptsAtuais)}</div>
+                            <div class="text-gray-600 dark:text-gray-400">Pontos Atuais</div>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">${formatNumber(project.conservador.mediaDiaria)}</div>
+                            <div class="text-gray-600 dark:text-gray-400">Pontos/Dia (Média)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <div class="text-gray-600 dark:text-gray-400">Atualizado em:</div>
+                                <div class="font-semibold text-gray-900 dark:text-white">${project.dataAtualizacao || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600 dark:text-gray-400">Fim da Season:</div>
+                                <div class="font-semibold text-gray-900 dark:text-white">${project.finalSeason || 'N/A'}</div>
+                            </div>
+                            <div>
+                                <div class="text-gray-600 dark:text-gray-400">Dias Restantes:</div>
+                                <div class="font-semibold text-gray-900 dark:text-white">${project.diasRestantes ? `${project.diasRestantes} dias` : 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            detailsDiv.classList.remove('hidden');
+        }
+        
+        function applySorting() {
+            // This would implement sorting logic
+            console.log('Sorting applied');
+        }
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDarkMode();
+            loadLanguage();
+            // Set default user and go directly to main app
+            const defaultUser = {
+                name: 'Usuário Intus',
+                method: 'direct'
+            };
+            localStorage.setItem('intus_user', JSON.stringify(defaultUser));
+            loadProjects();
+        });
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDmy5yTbI5HuFi7aG64KpIYFqydAA4%2Fy8%2FNvMhJTgwbAUcX8ZcOB%2B38kaj0al2hk7uAOlRi6b12suKduq%2BXlPENg1b3hjPjrUfprATZJfTLEdCNP8jf268LvvsgN%2BcsL7JwKWsOEGyDq94zuhYbV053xIx0bBkxADCiRMi1PUEIyJ6%2BchqhBByBNQVoAlV%2BF113B6NvOHKz42yVLoJoGcPt6AAnRFzBJtyLdQnaG2V3Sc4L9wg1YSbmP5zGwp3QkdfG0etzqi1yHF1IHIa4Pm3J2U3N1Udu%2BFanieNn%2BSf01nXiWyDrNSpxpGDuSl6lm%2Bs2v9MwRZlnK9%2B1C3MsTu%2F6ALIFevSmdPbFFtyYa163%2Fx3x0x5KtAZcjiVMBWro8WSjIHyoXskWgrjvgcu69CpQ2UTIdqghLFEkE0c9LqwUEmALWAtDsOEIws77Ms9iicSc4hH8cEZlQR6rmXTwYT4LfhTZMf5plJYveZfUYKF2U%2F2zy2G7rdZhFtD%2FBsJMPXOg%3D%3D";
+        window.__genspark_locale = "pt-BR";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDmy5yTbI5HuFi7aG64KpIYFqydAA4/y8/NvMhJTgwbAUcX8ZcOB+38kaj0al2hk7uAOlRi6b12suKduq+XlPENg1b3hjPjrUfprATZJfTLEdCNP8jf268LvvsgN+csL7JwKWsOEGyDq94zuhYbV053xIx0bBkxADCiRMi1PUEIyJ6+chqhBByBNQVoAlV+F113B6NvOHKz42yVLoJoGcPt6AAnRFzBJtyLdQnaG2V3Sc4L9wg1YSbmP5zGwp3QkdfG0etzqi1yHF1IHIa4Pm3J2U3N1Udu+FanieNn+Sf01nXiWyDrNSpxpGDuSl6lm+s2v9MwRZlnK9+1C3MsTu/6ALIFevSmdPbFFtyYa163/x3x0x5KtAZcjiVMBWro8WSjIHyoXskWgrjvgcu69CpQ2UTIdqghLFEkE0c9LqwUEmALWAtDsOEIws77Ms9iicSc4hH8cEZlQR6rmXTwYT4LfhTZMf5plJYveZfUYKF2U/2zy2G7rdZhFtD/BsJMPXOg==";
+    </script>
+    
+        <script id="html_badge_script2" src="https://www.genspark.ai/html_badge.js"></script>
+        
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
