@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - INTUS CRIPTO</title>
+    
+    <!-- Supabase Auth UI CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/@supabase/auth-ui-shared@0.1.8/dist/index.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: radial-gradient(ellipse at center, #0a0f1c 0%, #050810 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Holographic background grid */
+        .holo-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            filter: blur(1px);
+            z-index: -1;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        /* Mouse follower effect */
+        .mouse-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+            transition: transform 0.1s ease;
+            border-radius: 50%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+        }
+
+        /* Logo Section */
+        .logo-section {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .logo-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .logo-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ffff, #0099ff, #6600ff) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: subtract;
+            animation: logoRotate 10s linear infinite;
+        }
+
+        .logo-ring::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ffff, #0099ff, #6600ff);
+            filter: blur(10px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .logo-img {
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            object-fit: cover;
+        }
+
+        .logo-img[src$=".svg"] {
+            background: transparent;
+            border: none;
+        }
+
+        .logo-img:not([src]),
+        .logo-img[src=""],
+        .logo-img[src*="sua-logo-aqui"] {
+            background: linear-gradient(45deg, rgba(0, 255, 255, 0.1), rgba(0, 153, 255, 0.1));
+            border: 2px solid rgba(0, 255, 255, 0.4);
+        }
+
+        .logo-img:not([src])::after,
+        .logo-img[src=""]::after,
+        .logo-img[src*="sua-logo-aqui"]::after {
+            content: 'IC';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: rgba(0, 255, 255, 0.8);
+        }
+
+        .logo-container:hover .logo-img {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        @keyframes logoRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .brand-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #00ffff, #0099ff, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.1em;
+        }
+
+        .brand-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            font-size: 0.9rem;
+            color: rgba(0, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.05), transparent);
+            transition: left 0.6s ease;
+            z-index: -1;
+        }
+
+        .auth-container:hover::before {
+            left: 100%;
+        }
+
+        .auth-container:hover {
+            border-color: rgba(0, 255, 255, 0.4);
+            box-shadow: 
+                0 20px 40px rgba(0, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Loading indicator */
+        .loading-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 255, 255, 0.2);
+            border-top: 3px solid #00ffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error/Info Messages */
+        .message-container {
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message-error {
+            background: rgba(255, 99, 99, 0.1);
+            border: 1px solid rgba(255, 99, 99, 0.3);
+            color: #ff9999;
+        }
+
+        .message-info {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: rgba(0, 255, 255, 0.9);
+        }
+
+        .message-container h3 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message-container p {
+            margin-bottom: 0.5rem;
+        }
+
+        .message-container ol {
+            margin-left: 1rem;
+        }
+
+        .message-container ol li {
+            margin-bottom: 0.25rem;
+        }
+
+        .message-container a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+        .message-container a:hover {
+            opacity: 0.8;
+        }
+
+        /* Supabase Auth UI Customization */
+        .supabase-auth-ui_ui {
+            width: 100%;
+        }
+
+        /* Customizar inputs do Supabase */
+        .supabase-auth-ui_ui input {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(0, 255, 255, 0.2) !important;
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 1rem !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .supabase-auth-ui_ui input:focus {
+            outline: none !important;
+            border-color: rgba(0, 255, 255, 0.5) !important;
+            box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.1) !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .supabase-auth-ui_ui input::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Customizar botões do Supabase */
+        .supabase-auth-ui_ui button {
+            background: linear-gradient(45deg, #00ffff, #0099ff) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            padding: 0.75rem 1rem !important;
+            font-weight: 600 !important;
+            font-size: 1rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            width: 100% !important;
+        }
+
+        .supabase-auth-ui_ui button:hover {
+            background: linear-gradient(45deg, #0099ff, #6600ff) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2) !important;
+        }
+
+        .supabase-auth-ui_ui button:disabled {
+            opacity: 0.6 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
+        /* Customizar labels */
+        .supabase-auth-ui_ui label {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500 !important;
+            margin-bottom: 0.5rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        /* Customizar links */
+        .supabase-auth-ui_ui a {
+            color: rgba(0, 255, 255, 0.9) !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .supabase-auth-ui_ui a:hover {
+            color: #00ffff !important;
+            text-decoration: underline !important;
+        }
+
+        /* Customizar divisores */
+        .supabase-auth-ui_ui .supabase-auth-ui_ui-divider {
+            color: rgba(255, 255, 255, 0.6) !important;
+            margin: 1.5rem 0 !important;
+        }
+
+        /* Customizar mensagens de erro do Supabase */
+        .supabase-auth-ui_ui .supabase-auth-ui_ui-message {
+            background: rgba(255, 99, 99, 0.1) !important;
+            border: 1px solid rgba(255, 99, 99, 0.3) !important;
+            color: #ff9999 !important;
+            border-radius: 12px !important;
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Customizar mensagens de sucesso */
+        .supabase-auth-ui_ui .supabase-auth-ui_ui-message-success {
+            background: rgba(0, 255, 99, 0.1) !important;
+            border: 1px solid rgba(0, 255, 99, 0.3) !important;
+            color: #00ff99 !important;
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer a {
+            color: rgba(0, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .auth-container {
+                padding: 2rem;
+            }
+            
+            .brand-title {
+                font-size: 1.8rem;
+            }
+            
+            .logo-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .logo-img {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Subtle animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* Hide elements initially for animation */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+    </style>
+</head>
+<body>
+    <div class="holo-grid"></div>
+    <div class="mouse-glow" id="mouseGlow"></div>
+    
+    <div class="container">
+        <div class="logo-section animate-in">
+            <div class="logo-container">
+                <div class="logo-ring"></div>
+                <!-- Logo configurada para: intus_logo.svg -->
+                <img src="intus_logo.svg" alt="Intus Cripto Logo" class="logo-img">
+            </div>
+            <h1 class="brand-title">INTUS CRIPTO</h1>
+            <p class="brand-subtitle">Ferramentas Avançadas para DeFi</p>
+            <p class="auth-subtitle">Acesse sua conta</p>
+        </div>
+
+        <div class="auth-container animate-in">
+            <!-- Container do Supabase Auth UI -->
+            <div id="supabase-auth-container"></div>
+            
+            <!-- Loading indicator -->
+            <div id="loading" class="loading-container hidden">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Verificando autenticação...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Powered by <a href="https://diegointuscripto.com.br/">Diego Intus</a>
+    </div>
+
+    <!-- Supabase JavaScript SDK via CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Supabase Auth UI JavaScript via CDN -->
+    <script src="https://unpkg.com/@supabase/auth-ui-web@0.4.7/dist/index.umd.js"></script>
+
+    <script>
+        // CONFIGURAÇÃO DO SUPABASE
+        const SUPABASE_URL = 'https://kjkfyiqcvspsyyqcvqut.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtqa2Z5aXFjdnNwc3l5cWN2cXV0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1MDIxOTIsImV4cCI6MjA2NTA3ODE5Mn0.AUqq-m3CH5GLbezINTyex0zAoxf2Fuvy5uXJIOKGGZE';
+        
+        // Inicializar elementos visuais
+        function initializeVisualEffects() {
+            // Mouse follower effect
+            const mouseGlow = document.getElementById('mouseGlow');
+            let mouseX = 0, mouseY = 0;
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                mouseGlow.style.transform = `translate(${mouseX - 150}px, ${mouseY - 150}px)`;
+            });
+
+            // Create floating orbs
+            function createOrbs() {
+                for (let i = 0; i < 5; i++) {
+                    const orb = document.createElement('div');
+                    orb.className = 'orb';
+                    
+                    const size = Math.random() * 100 + 50;
+                    orb.style.width = size + 'px';
+                    orb.style.height = size + 'px';
+                    orb.style.left = Math.random() * window.innerWidth + 'px';
+                    orb.style.top = Math.random() * window.innerHeight + 'px';
+                    orb.style.animationDelay = Math.random() * 8 + 's';
+                    
+                    document.body.appendChild(orb);
+                }
+            }
+
+            // Enhanced container interactions
+            const authContainer = document.querySelector('.auth-container');
+            authContainer.addEventListener('mouseenter', (e) => {
+                const rect = authContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                authContainer.style.transformOrigin = `${x}px ${y}px`;
+            });
+            
+            authContainer.addEventListener('mousemove', (e) => {
+                const rect = authContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 40;
+                const rotateY = (centerX - x) / 40;
+                
+                authContainer.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            authContainer.addEventListener('mouseleave', () => {
+                authContainer.style.transform = 'rotateX(0) rotateY(0)';
+            });
+
+            createOrbs();
+        }
+
+        // Verificar se as credenciais foram configuradas
+        function checkCredentials() {
+            if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+                document.getElementById('supabase-auth-container').innerHTML = `
+                    <div class="message-container message-info">
+                        <h3>⚙️ Configuração Necessária</h3>
+                        <p>Para usar o sistema de login, você precisa configurar suas credenciais do Supabase.</p>
+                        <ol>
+                            <li>Acesse <a href="https://supabase.com" target="_blank">supabase.com</a></li>
+                            <li>Crie um projeto gratuito</li>
+                            <li>Vá em Settings → API</li>
+                            <li>Copie a URL e a chave anon/public</li>
+                            <li>Substitua no código JavaScript desta página</li>
+                        </ol>
+                    </div>
+                `;
+                return false;
+            }
+            return true;
+        }
+        
+        // Inicializar cliente Supabase apenas se as credenciais estiverem configuradas
+        let supabase = null;
+        
+        // Verificar se já está autenticado ao carregar a página
+        async function checkAuthStatus() {
+            if (!checkCredentials()) {
+                return;
+            }
+            
+            try {
+                // Inicializar cliente Supabase
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (session) {
+                    // Usuário já está logado, redirecionar para index.html
+                    console.log('Usuário já autenticado, redirecionando...');
+                    showLoading('Usuário já logado! Redirecionando...');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                    return;
+                }
+                
+                // Se não está logado, mostrar o formulário de auth
+                initializeAuthUI();
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                showError('Erro ao conectar com o Supabase. Verifique suas credenciais.');
+            }
+        }
+        
+        // Mostrar loading
+        function showLoading(message = 'Verificando autenticação...') {
+            document.getElementById('supabase-auth-container').style.display = 'none';
+            const loadingDiv = document.getElementById('loading');
+            loadingDiv.classList.remove('hidden');
+            loadingDiv.querySelector('.loading-text').textContent = message;
+        }
+        
+        // Esconder loading
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('supabase-auth-container').style.display = 'block';
+        }
+        
+        // Mostrar erro na tela
+        function showError(message) {
+            document.getElementById('supabase-auth-container').innerHTML = `
+                <div class="message-container message-error">
+                    <h3>❌ Erro</h3>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        // Inicializar o componente de autenticação do Supabase
+        function initializeAuthUI() {
+            try {
+                // Verificar se a biblioteca Auth UI carregou
+                if (!window.SupabaseAuthUI) {
+                    showError('Biblioteca de autenticação não carregou. Verifique sua conexão com a internet.');
+                    return;
+                }
+                
+                const { AuthComponent } = window.SupabaseAuthUI;
+                
+                AuthComponent(
+                    document.getElementById('supabase-auth-container'),
+                    {
+                        supabaseClient: supabase,
+                        appearance: {
+                            theme: 'dark',
+                            variables: {
+                                default: {
+                                    colors: {
+                                        brand: '#00ffff',
+                                        brandAccent: '#0099ff',
+                                        brandButtonText: 'white',
+                                        defaultButtonBackground: 'rgba(255, 255, 255, 0.05)',
+                                        defaultButtonBackgroundHover: 'rgba(255, 255, 255, 0.1)',
+                                        defaultButtonBorder: 'rgba(0, 255, 255, 0.2)',
+                                        defaultButtonText: 'white',
+                                        dividerBackground: 'rgba(255, 255, 255, 0.2)',
+                                        inputBackground: 'rgba(255, 255, 255, 0.05)',
+                                        inputBorder: 'rgba(0, 255, 255, 0.2)',
+                                        inputBorderHover: 'rgba(0, 255, 255, 0.4)',
+                                        inputBorderFocus: 'rgba(0, 255, 255, 0.5)',
+                                        inputText: 'white',
+                                        inputLabelText: 'rgba(255, 255, 255, 0.9)',
+                                        inputPlaceholder: 'rgba(255, 255, 255, 0.5)',
+                                        messageText: '#ff9999',
+                                        messageTextDanger: '#ff9999',
+                                        anchorTextColor: 'rgba(0, 255, 255, 0.9)',
+                                        anchorTextHoverColor: '#00ffff',
+                                    },
+                                    space: {
+                                        spaceSmall: '4px',
+                                        spaceMedium: '8px',
+                                        spaceLarge: '16px',
+                                        labelBottomMargin: '8px',
+                                        anchorBottomMargin: '4px',
+                                        emailInputSpacing: '4px',
+                                        socialAuthSpacing: '4px',
+                                        buttonPadding: '10px 15px',
+                                        inputPadding: '10px 15px',
+                                    },
+                                    borderWidths: {
+                                        buttonBorderWidth: '1px',
+                                        inputBorderWidth: '1px',
+                                    },
+                                    radii: {
+                                        borderRadiusButton: '12px',
+                                        buttonBorderRadius: '12px',
+                                        inputBorderRadius: '12px',
+                                    },
+                                }
+                            },
+                            className: {
+                                container: 'supabase-auth-container',
+                                button: 'supabase-auth-button',
+                                input: 'supabase-auth-input',
+                            }
+                        },
+                        providers: ['google'],
+                        redirectTo: `${window.location.origin}/index.html`,
+                        localization: {
+                            variables: {
+                                sign_in: {
+                                    email_label: 'E-mail',
+                                    password_label: 'Senha',
+                                    button_label: 'Entrar',
+                                    loading_button_label: 'Entrando...',
+                                    social_provider_text: 'Entrar com {{provider}}',
+                                    link_text: 'Já tem uma conta? Entre aqui'
+                                },
+                                sign_up: {
+                                    email_label: 'E-mail',
+                                    password_label: 'Senha',
+                                    button_label: 'Criar conta',
+                                    loading_button_label: 'Criando conta...',
+                                    social_provider_text: 'Criar conta com {{provider}}',
+                                    link_text: 'Não tem conta? Crie uma aqui',
+                                    confirmation_text: 'Verifique seu e-mail para o link de confirmação'
+                                },
+                                forgotten_password: {
+                                    email_label: 'E-mail',
+                                    button_label: 'Enviar instruções',
+                                    loading_button_label: 'Enviando...',
+                                    link_text: 'Esqueceu sua senha?',
+                                    confirmation_text: 'Verifique seu e-mail para o link de redefinição'
+                                }
+                            }
+                        }
+                    }
+                );
+                
+                console.log('Auth UI inicializado com sucesso!');
+            } catch (error) {
+                console.error('Erro ao inicializar Auth UI:', error);
+                showError('Erro ao carregar o formulário de login. Tente recarregar a página.');
+            }
+        }
+        
+        // Escutar mudanças no estado de autenticação
+        function setupAuthListener() {
+            if (!supabase) return;
+            
+            supabase.auth.onAuthStateChange((event, session) => {
+                console.log('Auth state changed:', event, session);
+                
+                if (event === 'SIGNED_IN' && session) {
+                    // Usuário fez login com sucesso
+                    console.log('Login realizado com sucesso!');
+                    
+                    // Mostrar loading
+                    showLoading('Login realizado! Redirecionando...');
+                    
+                    // Redirecionar para a página principal após um breve delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+                
+                if (event === 'SIGNED_OUT') {
+                    // Usuário fez logout
+                    console.log('Logout realizado');
+                    hideLoading();
+                    // Recarregar a página para mostrar o formulário de login novamente
+                    window.location.reload();
+                }
+            });
+        }
+
+        // Inicializar animações
+        function initializeAnimations() {
+            // Stagger animations
+            const animatedElements = document.querySelectorAll('.animate-in');
+            animatedElements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 300);
+            });
+        }
+        
+        // Verificar status de autenticação quando a página carrega
+        document.addEventListener('DOMContentLoaded', async () => {
+            initializeVisualEffects();
+            initializeAnimations();
+            await checkAuthStatus();
+            setupAuthListener();
+        });
+        
+        /*
+        ÁREA PARA FUNCIONALIDADES FUTURAS:
+        - Aqui você pode adicionar validações customizadas
+        - Integração com n8n para registro de acessos
+        - Coleta de dados adicionais (WhatsApp) após primeiro login
+        - Analytics de login
+        - Verificações de segurança adicionais
+        */
+    </script>
+</body>
+</html>

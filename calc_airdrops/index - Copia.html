@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -292,81 +291,6 @@
             border-radius: 0 0 8px 8px;
         }
         
-        /* airdrop Simulator Styles */
-        .roi-simulator {
-            background: #276bd8;
-            border: 2px solid #fbbf24;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            color: white;
-        }
-        
-        .roi-simulator h3 {
-            color: #fbbf24;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .roi-simulator input {
-            background: #4b5563;
-            border: 1px solid #6b7280;
-            color: white;
-            padding: 0.5rem;
-            border-radius: 6px;
-            width: 100%;
-        }
-        
-        .roi-simulator input:focus {
-            outline: none;
-            border-color: #fbbf24;
-            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
-        }
-        
-        .roi-simulator button {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: #1a1a1a;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .roi-simulator button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
-        }
-        
-        .roi-results {
-            display: none;
-            margin-top: 1rem;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .roi-results.show {
-            display: grid;
-        }
-        
-        .roi-result-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            padding: 1rem;
-        }
-        
-        .roi-result-conservative {
-            border-left: 4px solid #3b82f6;
-        }
-        
-        .roi-result-approximate {
-            border-left: 4px solid #fbbf24;
-        }
-        
         @media (max-width: 768px) {
             .video-card {
                 min-width: 280px;
@@ -380,10 +304,6 @@
                 width: 45px;
                 height: 45px;
                 font-size: 20px;
-            }
-            
-            .roi-results {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -750,16 +670,7 @@
                 'community-description': 'Acesse conteúdos exclusivos, análises detalhadas e mantenha-se atualizado sobre as melhores oportunidades no mundo cripto',
                 'footer-copyright': '© 2024 Intus Cripto',
                 'footer-slogan': 'Faça parte da melhor comunidade de CriptoAtivos do Brasil',
-                'footer-data': 'Dados atualizados automaticamente',
-                'roi-simulator-title': ' Airdrop $',
-                'your-points': 'Seus Pontos',
-                'simulated-fdv': 'FDV Simulado ($)',
-                'simulated-supply': 'Airdrop Supply Simulado',
-                'calculate': 'Calcular',
-                'conservative': 'Conservador',
-                'approximate': 'Aproximado',
-                'estimated-value': 'Valor Estimado',
-                'roi-percentage': 'airdrop'
+                'footer-data': 'Dados atualizados automaticamente'
             },
             en: {
                 'site-title': 'Intus Crypto',
@@ -794,16 +705,7 @@
                 'community-description': 'Access exclusive content, detailed analysis and stay updated on the best opportunities in the crypto world',
                 'footer-copyright': '© 2024 Intus Crypto',
                 'footer-slogan': 'Join the best CryptoAssets community in Brazil',
-                'footer-data': 'Data updated automatically',
-                'roi-simulator-title': 'airdrop $',
-                'your-points': 'Your Points',
-                'simulated-fdv': 'Simulated FDV ($)',
-                'simulated-supply': 'Simulated Airdrop Supply',
-                'calculate': 'Calculate',
-                'conservative': 'Conservative',
-                'approximate': 'Approximate',
-                'estimated-value': 'Estimated Value',
-                'roi-percentage': 'airdrop'
+                'footer-data': 'Data updated automatically'
             },
             es: {
                 'site-title': 'Intus Cripto',
@@ -838,16 +740,7 @@
                 'community-description': 'Accede a contenido exclusivo, análisis detallados y mantente actualizado sobre las mejores oportunidades en el mundo cripto',
                 'footer-copyright': '© 2024 Intus Cripto',
                 'footer-slogan': 'Únete a la mejor comunidad de CriptoActivos de Brasil',
-                'footer-data': 'Datos actualizados automáticamente',
-                'roi-simulator-title': 'airdrop $',
-                'your-points': 'Tus Puntos',
-                'simulated-fdv': 'FDV Simulado ($)',
-                'simulated-supply': 'Suministro Airdrop Simulado',
-                'calculate': 'Calcular',
-                'conservative': 'Conservador',
-                'approximate': 'Aproximado',
-                'estimated-value': 'Valor Estimado',
-                'roi-percentage': 'airdrop'
+                'footer-data': 'Datos actualizados automáticamente'
             }
         };
         
@@ -911,116 +804,6 @@
                 dropdown.classList.add('hidden');
             }
         });
-        
-        // ROI Simulator Functions
-        function createROISimulator(projectName, project) {
-            const simulatorId = `roi-simulator-${projectName.replace(/\s+/g, '')}`;
-            
-            return `
-                <div id="${simulatorId}" class="roi-simulator mb-6" data-project-name="${projectName}">
-                    <h3>
-                        <i class="fas fa-calculator"></i>
-                        <span data-translate="roi-simulator-title">🧮 Simulador de ROI</span>
-                    </h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-2" data-translate="your-points">Seus Pontos</label>
-                            <input type="number" id="${simulatorId}-points" placeholder="100000" class="simulator-input">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2" data-translate="simulated-fdv">FDV Simulado ($)</label>
-                            <input type="number" id="${simulatorId}-fdv" placeholder="${project.fdv || 100000000}" value="${project.fdv || ''}" class="simulator-input">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-2" data-translate="simulated-supply">Airdrop Supply Simulado</label>
-                            <input type="number" id="${simulatorId}-supply" placeholder="${project.airdropSupply || 10000000}" value="${project.airdropSupply || ''}" class="simulator-input">
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mb-4">
-                        <button onclick="calculateROI('${simulatorId}', '${projectName}')" class="roi-calculate-btn">
-                            <i class="fas fa-calculator mr-2"></i>
-                            <span data-translate="calculate">Calcular</span>
-                        </button>
-                    </div>
-                    
-                    <div id="${simulatorId}-results" class="roi-results">
-                        <div class="roi-result-card roi-result-conservative">
-                            <h4 class="font-semibold mb-2">
-                                <i class="fas fa-shield-alt mr-2"></i>
-                                <span data-translate="conservative">Conservador</span>
-                            </h4>
-                            <div class="text-sm">
-                                <div class="mb-2">
-                                    <span data-translate="estimated-value">Valor Estimado:</span>
-                                    <span id="${simulatorId}-conservative-value" class="font-bold text-green-400">$0.00</span>
-                                </div>
-                                <div>
-                                    <span data-translate="roi-percentage">ROI:</span>
-                                    <span id="${simulatorId}-conservative-roi" class="font-bold text-yellow-400">0%</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="roi-result-card roi-result-approximate">
-                            <h4 class="font-semibold mb-2">
-                                <i class="fas fa-chart-line mr-2"></i>
-                                <span data-translate="approximate">Aproximado</span>
-                            </h4>
-                            <div class="text-sm">
-                                <div class="mb-2">
-                                    <span data-translate="estimated-value">Valor Estimado:</span>
-                                    <span id="${simulatorId}-approximate-value" class="font-bold text-green-400">$0.00</span>
-                                </div>
-                                <div>
-                                    <span data-translate="roi-percentage">ROI:</span>
-                                    <span id="${simulatorId}-approximate-roi" class="font-bold text-yellow-400">0%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function calculateROI(simulatorId, projectName) {
-            const project = projectsData[projectName];
-            if (!project) return;
-            
-            const userPoints = parseFloat(document.getElementById(`${simulatorId}-points`).value) || 0;
-            const fdvSimulated = parseFloat(document.getElementById(`${simulatorId}-fdv`).value) || project.fdv || 0;
-            const airdropSupplySimulated = parseFloat(document.getElementById(`${simulatorId}-supply`).value) || project.airdropSupply || 0;
-            
-            if (userPoints <= 0 || fdvSimulated <= 0 || airdropSupplySimulated <= 0 || !project.totalSupply) {
-                alert('Por favor, preencha todos os campos com valores válidos.');
-                return;
-            }
-            
-            // Calculations
-            const valorAirdrop = (fdvSimulated * (airdropSupplySimulated / project.totalSupply));
-            
-            // Conservative scenario
-            const conservativeValue = project.conservador.ptsTotal ? 
-                (userPoints / project.conservador.ptsTotal) * valorAirdrop : 0;
-            const conservativeROI = project.conservador.custoPorPts ? 
-                (conservativeValue / (userPoints * project.conservador.custoPorPts)) * 100 : 0;
-            
-            // Approximate scenario
-            const approximateValue = project.aproximado.ptsTotal ? 
-                (userPoints / project.aproximado.ptsTotal) * valorAirdrop : 0;
-            const approximateROI = project.aproximado.custoPorPts ? 
-                (approximateValue / (userPoints * project.aproximado.custoPorPts)) * 100 : 0;
-            
-            // Display results
-            document.getElementById(`${simulatorId}-conservative-value`).textContent = `$${conservativeValue.toFixed(2)}`;
-            document.getElementById(`${simulatorId}-conservative-roi`).textContent = `${conservativeROI.toFixed(1)}%`;
-            document.getElementById(`${simulatorId}-approximate-value`).textContent = `$${approximateValue.toFixed(2)}`;
-            document.getElementById(`${simulatorId}-approximate-roi`).textContent = `${approximateROI.toFixed(1)}%`;
-            
-            // Show results
-            document.getElementById(`${simulatorId}-results`).classList.add('show');
-        }
         
         // Project Data
         const projectsData = {
@@ -2084,14 +1867,8 @@
             const aproximadoValue = project.aproximado.custoPorPts ? 
                 `$${project.aproximado.custoPorPts.toFixed(12)}` : 'N/A';
             
-            // Create ROI simulator
-            const roiSimulator = createROISimulator(project.name, project);
-            
             detailsDiv.innerHTML = `
-                <div class="project-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in" data-project-name="${project.name}">
-                    
-                    ${roiSimulator}
-                    
+                <div class="project-card bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 fade-in">
                     <div class="flex justify-between items-start mb-6">
                         <div class="flex items-center space-x-3">
                             <h2 class="text-2xl font-bold text-gray-900 dark:text-white">${project.name}</h2>
@@ -2243,9 +2020,6 @@
             `;
             
             detailsDiv.classList.remove('hidden');
-            
-            // Apply translations to the new content
-            applyTranslations();
         }
         
         function applySorting() {
@@ -2270,9 +2044,9 @@
 </html>
     <script id="html_badge_script1">
         window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
-            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDtZJ7Q2mC8761oJIFn6UaWHZdkERMpCuEYDjEoidsKvniUbBzq9DKuDkS88WC5uOIE9qv0yzsqtO81BwqW6n%2FRMQwMqB8hWZERUfaM6QYMxYBQjWa7ubAFWTfS8Z5abR0SE21%2FopqBQRD6%2B4Xof%2FPqCBA%2F5srQHi3IrxC2Ob%2Foj%2Babrk%2FUJRgiwIWxo3XBskCxwrHRQJzrDRs4dmo3x3k%2BxWKCbt%2B%2FJ3S9OM%2BLUFED4pBMIqDzitGmWtQoZVwEuOF614Cmo4nMo8rJwPEIG3r9dwH%2BeIOTR47RUdKy7zHQ30OhBQNCZcWy8rJsTpdb0Py%2FT65tyLxxSK8MbrrL3X5Yg7w4xD8hRe7QqwrBoN8%2BVcOmlOVvIQC4ZyE9jjI%2FZnF6SBp2BRxB1NQQ9SF%2Fr%2BUfck%2FSzQQSCn1S1HsGLXP4rUxFDxJhd6kg61ir7yTlcZNHDvPcUc0D1EfL2kxv2%2BQ0VCRQt%2B1tPIgJronF%2B%2BB832gzFGEFG9nR6KHnKcG0VlIHTDtI2UBVHBREB5hLomoZc%3D";
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDmy5yTbI5HuFi7aG64KpIYFqydAA4%2Fy8%2FNvMhJTgwbAUcX8ZcOB%2B38kaj0al2hk7uAOlRi6b12suKduq%2BXlPENg1b3hjPjrUfprATZJfTLEdCNP8jf268LvvsgN%2BcsL7JwKWsOEGyDq94zuhYbV053xIx0bBkxADCiRMi1PUEIyJ6%2BchqhBByBNQVoAlV%2BF113B6NvOHKz42yVLoJoGcPt6AAnRFzBJtyLdQnaG2V3Sc4L9wg1YSbmP5zGwp3QkdfG0etzqi1yHF1IHIa4Pm3J2U3N1Udu%2BFanieNn%2BSf01nXiWyDrNSpxpGDuSl6lm%2Bs2v9MwRZlnK9%2B1C3MsTu%2F6ALIFevSmdPbFFtyYa163%2Fx3x0x5KtAZcjiVMBWro8WSjIHyoXskWgrjvgcu69CpQ2UTIdqghLFEkE0c9LqwUEmALWAtDsOEIws77Ms9iicSc4hH8cEZlQR6rmXTwYT4LfhTZMf5plJYveZfUYKF2U%2F2zy2G7rdZhFtD%2FBsJMPXOg%3D%3D";
         window.__genspark_locale = "pt-BR";
-        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDtZJ7Q2mC8761oJIFn6UaWHZdkERMpCuEYDjEoidsKvniUbBzq9DKuDkS88WC5uOIE9qv0yzsqtO81BwqW6n/RMQwMqB8hWZERUfaM6QYMxYBQjWa7ubAFWTfS8Z5abR0SE21/opqBQRD6+4Xof/PqCBA/5srQHi3IrxC2Ob/oj+abrk/UJRgiwIWxo3XBskCxwrHRQJzrDRs4dmo3x3k+xWKCbt+/J3S9OM+LUFED4pBMIqDzitGmWtQoZVwEuOF614Cmo4nMo8rJwPEIG3r9dwH+eIOTR47RUdKy7zHQ30OhBQNCZcWy8rJsTpdb0Py/T65tyLxxSK8MbrrL3X5Yg7w4xD8hRe7QqwrBoN8+VcOmlOVvIQC4ZyE9jjI/ZnF6SBp2BRxB1NQQ9SF/r+Ufck/SzQQSCn1S1HsGLXP4rUxFDxJhd6kg61ir7yTlcZNHDvPcUc0D1EfL2kxv2+Q0VCRQt+1tPIgJronF++B832gzFGEFG9nR6KHnKcG0VlIHTDtI2UBVHBREB5hLomoZc=";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDmy5yTbI5HuFi7aG64KpIYFqydAA4/y8/NvMhJTgwbAUcX8ZcOB+38kaj0al2hk7uAOlRi6b12suKduq+XlPENg1b3hjPjrUfprATZJfTLEdCNP8jf268LvvsgN+csL7JwKWsOEGyDq94zuhYbV053xIx0bBkxADCiRMi1PUEIyJ6+chqhBByBNQVoAlV+F113B6NvOHKz42yVLoJoGcPt6AAnRFzBJtyLdQnaG2V3Sc4L9wg1YSbmP5zGwp3QkdfG0etzqi1yHF1IHIa4Pm3J2U3N1Udu+FanieNn+Sf01nXiWyDrNSpxpGDuSl6lm+s2v9MwRZlnK9+1C3MsTu/6ALIFevSmdPbFFtyYa163/x3x0x5KtAZcjiVMBWro8WSjIHyoXskWgrjvgcu69CpQ2UTIdqghLFEkE0c9LqwUEmALWAtDsOEIws77Ms9iicSc4hH8cEZlQR6rmXTwYT4LfhTZMf5plJYveZfUYKF2U/2zy2G7rdZhFtD/BsJMPXOg==";
     </script>
     
         <script id="html_badge_script2" src="https://www.genspark.ai/html_badge.js"></script>
